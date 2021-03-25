@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cos.baseball.domain.player.Player;
+import com.cos.baseball.domain.player.dto.PlayerByPositionRespDto;
 import com.cos.baseball.domain.player.dto.PlayerSaveReqDto;
 import com.cos.baseball.domain.team.Team;
 import com.cos.baseball.domain.team.dto.TeamSaveReqDto;
+import com.cos.baseball.query.PositionQuery;
 import com.cos.baseball.service.PlayerService;
 import com.cos.baseball.service.TeamService;
 import com.cos.baseball.util.Script;
@@ -29,6 +32,16 @@ public class PlayerController {
 
 	private final TeamService teamService;
 	private final PlayerService playerService;
+	private final PositionQuery positionQuery;
+	
+	@GetMapping("/position")
+	public String byPosition(Model model) {
+		JpaResultMapper jpaResultMapper = new JpaResultMapper();
+		List<PlayerByPositionRespDto> myDtos = jpaResultMapper.list(positionQuery.positionPivot(), PlayerByPositionRespDto.class);
+		model.addAttribute("dto", myDtos);
+		System.out.println(myDtos);
+		return "list";
+	}
 
 	@GetMapping("/player")
 	public String list(Model model) {
